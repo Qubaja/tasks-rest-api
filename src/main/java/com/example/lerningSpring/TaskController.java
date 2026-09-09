@@ -1,9 +1,6 @@
 package com.example.lerningSpring;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -20,9 +17,16 @@ public class TaskController {
     public List<Task> tasks() {
         return service.findAll();
     }
-    @GetMapping("/titel")
-    public List<Task> id(){
 
+    @PostMapping("/tasks")
+    public Task creat(@RequestBody Task task) {
+        return service.create(task);
     }
 
+    @GetMapping("/tasks/{id}")
+    public Task one(@PathVariable Long id) {
+        return service.findById(id);
+    }
 }
+
+
