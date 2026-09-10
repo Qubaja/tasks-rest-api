@@ -20,10 +20,9 @@ public class TaskService {
         return tasks;
     }
 
-    private long nextId = 3;
+
 
     public Task create(Task task) {
-        task.setId(nextId++);
         tasks.add(task);
         return task;
     }
