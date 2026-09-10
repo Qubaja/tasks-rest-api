@@ -1,6 +1,6 @@
 # Task API
 
-A REST API for managing tasks — create, retrieve, delete. Built to work through Spring Boot layer by layer rather than adopting a finished example.
+A REST API for managing tasks — create, retrieve, update, delete. Built to work through Spring Boot layer by layer rather than adopting a finished example.
 
 **Java 26 · Spring Boot 4.1 · Spring Data JPA · H2 · Gradle**
 
@@ -21,6 +21,7 @@ The API is then available at `http://localhost:8080/tasks`, with two sample task
 | `GET` | `/tasks` | All tasks |
 | `GET` | `/tasks/{id}` | A single task |
 | `POST` | `/tasks` | Create a task |
+| `PUT` | `/tasks/{id}` | Update a task |
 | `DELETE` | `/tasks/{id}` | Delete a task |
 
 A task:
@@ -37,12 +38,22 @@ curl -X POST http://localhost:8080/tasks \
   -d '{"titel":"Einkaufen","erledigt":false}'
 ```
 
-The `id` is assigned by the database and ignored on creation.
+The `id` is assigned by the database and ignored on input — on update it is taken from the URL.
 
-Unknown tasks return a consistent error response with status 404:
+## Errors
+
+Both failure cases return the same shape, so a client only has to parse one format.
+
+Unknown task — status 404:
 
 ```json
 { "status": 404, "message": "Task 99 nicht gefunden" }
+```
+
+Invalid input, such as an empty title — status 400:
+
+```json
+{ "status": 400, "message": "must not be blank" }
 ```
 
 ## Structure
@@ -55,7 +66,7 @@ The application is split into three layers, each with one clearly defined respon
 
 **Repository** — talks to the database. An interface without an implementation; Spring Data generates the class behind it at runtime.
 
-Alongside these sits a central exception handler that translates domain errors into HTTP status codes, keeping error handling in one place instead of spread across the endpoints.
+Alongside these sits a central exception handler that translates domain errors and validation failures into HTTP status codes, keeping error handling in one place instead of spread across the endpoints.
 
 The value of that separation showed during the switch of the persistence layer: tasks originally lived in a Java list, later in a database. Only the bottom layer was replaced — the controller and the error handling stayed untouched.
 
@@ -67,7 +78,5 @@ The web console is available at `http://localhost:8080/h2-console` — JDBC URL 
 
 ## Next steps
 
-- `PUT /tasks/{id}` for updates
-- Input validation
 - Tests with MockMvc and Mockito
 - PostgreSQL instead of H2

@@ -1,5 +1,6 @@
 package com.example.lerningSpring;
 
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -9,9 +10,11 @@ import java.util.List;
 public class TaskController {
 
     private final TaskService service;
+    private final TaskRepository taskRepository;
 
-    public TaskController(TaskService service) {
+    public TaskController(TaskService service, TaskRepository taskRepository) {
         this.service = service;
+        this.taskRepository = taskRepository;
     }
 
     @GetMapping("/tasks")
@@ -20,7 +23,7 @@ public class TaskController {
     }
 
     @PostMapping("/tasks")
-    public Task creat(@RequestBody Task task) {
+    public Task creat(@Valid @RequestBody Task task) {
         return service.create(task);
     }
 
@@ -31,7 +34,15 @@ public class TaskController {
 
     @DeleteMapping("/tasks/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Long id){ service.delete(id);}
+    public void delete(@PathVariable Long id) {
+        service.delete(id);
+    }
+
+    @PutMapping("/tasks/{id}")
+    public Task update(@PathVariable Long id, @Valid @RequestBody Task task) {
+        return service.update(id, task);
+    }
+
 }
 
 
