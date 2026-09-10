@@ -2,41 +2,39 @@ package com.example.lerningSpring;
 
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 
 @Service
 public class TaskService {
-    private final List<Task> tasks = new ArrayList<>();
 
-    public TaskService() {                                // hier befüllen
-        tasks.add(new Task(1L, "Spring lernen", false));
-        tasks.add(new Task(2L, "Kaffee holen", true));
+    private final TaskRepository taskRepository;
+
+    public TaskService(TaskRepository taskRepository) {
+        this.taskRepository = taskRepository;
     }
 
     public List<Task> findAll() {
-        return tasks;
+        return taskRepository.findAll();
     }
-
 
 
     public Task create(Task task) {
-        tasks.add(task);
-        return task;
+        return taskRepository.save(task);
     }
 
     public Task findById(Long id) {
-        return tasks.stream()
-                .filter(t -> t.getId().equals(id))
-                .findFirst()
-                .orElseThrow(() -> new TaskNotFoundException(id));
-
+        return taskRepository.findById(id)
+                .orElseThrow(() ->  new TaskNotFoundException(id));
     }
-    public void delete(Long id){
-       tasks.remove(findById(id));
 
+    public void delete(Long id) {
+
+        if (!(taskRepository.existsById(id))) {
+            throw new TaskNotFoundException(id);
+        }
+        taskRepository.deleteById(id);
     }
 
 }
