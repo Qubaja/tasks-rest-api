@@ -1,5 +1,6 @@
 package com.example.lerningSpring;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,6 +28,10 @@ public class TaskController {
     public Task one(@PathVariable Long id) {
         return service.findById(id);
     }
+
+    @DeleteMapping("/tasks/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Long id){ service.delete(id);}
 }
 
 

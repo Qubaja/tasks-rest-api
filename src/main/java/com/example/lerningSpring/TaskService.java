@@ -35,6 +35,9 @@ public class TaskService {
                 .orElseThrow(() -> new TaskNotFoundException(id));
 
     }
+    public void delete(Long id){
+       tasks.remove(findById(id));
 
+    }
 
 }
